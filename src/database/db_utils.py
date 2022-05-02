@@ -1,19 +1,26 @@
-def dict_to_create_string(fields: dict) -> None:
-    assert isinstance(fields, dict), 'fields must be a dictionary with all fields names and primitive types'
+def field_format(field: any) -> any:
+    """
+    Format a database field, to make a correct sql string
+    """
     
-    try:
-        create_string = ''.join([f'{field} {type},' for field, type in fields.items()])
-        return '(' + create_string[:-1] + ');'     
-    except AttributeError as err:
-        print(err)
+    if isinstance(field, str):
+        return f"'{field}'"
+    
+    if isinstance(field, type):
+        return field.id
+    
+    return field
 
 
 def dict_to_insert_string(values: dict) -> str:
+    """
+        Creates a sql insert string
+    """
     assert isinstance(values, dict), 'values must be a dictionary with the fields and values to be insert'
 
     try:
         fields = '(' + ''.join([f'{field},' for field in values])[:-1] + ')'
-        insert_values = '(' + ''.join([f"'{field}'," if isinstance(field, str) else f'{field},' for field in values.values()])[:-1] + ');'
+        insert_values = '(' + ''.join([f"{field_format(field)}," for field in values.values()])[:-1] + ');'
         return fields + ' VALUES ' + insert_values
     except AttributeError as err:
         print(err)
@@ -27,7 +34,7 @@ def dict_to_update_string(changes: dict) -> str:
     
     id =  changes.pop('id', changes['id'])
     
-    sql = 'SET ' +''.join([f"{key} = '{value}'," if isinstance(value, str) else f"{key} = {value}," for key, value in changes.items()])[:-1]
+    sql = 'SET ' +''.join([f"{key} = {field_format(value)}," for key, value in changes.items()])[:-1]
     
     sql += f" WHERE id = {id}"
     
