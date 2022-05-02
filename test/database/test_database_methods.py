@@ -104,5 +104,57 @@ class TestInsertCase(MockSqliteDB):
             self.assertEqual(len(result), 1)
 
 
+# Update Function Tests
+class TestUpdateCase(MockSqliteDB):
+    
+    def test_should_raises_an_error_if_the_parameter_table_name_is_not_a_string(self) -> None:
+        with self.assertRaises(AssertionError):
+            database_methods.update(table_name=2, values={'name': 'Test'})
+    
+    
+    def test_should_raises_an_error_if_the_parameter_values_is_not_a_dictionary(self) -> None:
+        with self.assertRaises(AssertionError):
+            database_methods.update(table_name='tbl_test', values=('name', 'Test'))
+
+
+    def test_should_raise_an_error_if_table_name_is_not_a_valid_table_on_database(self) -> None:
+        with self.assertRaises(ValueError):
+            database_methods.update(table_name='tbl_store', values={'name': 'Test'})
+            
+            
+    def test_should_update_a_row_on_the_table_on_database(self) -> None:
+        with self.config_conn:
+            database_methods.insert('tbl_product', {'name': 'Test', 'price': 12.5, 'stock': 23})
+            database_methods.update(table_name='tbl_product', values={'id': 1, 'name': 'iPhone'})
+            product = database_methods.select('SELECT * FROM tbl_product WHERE id = 1')
+            self.assertEqual(product[0][1], 'iPhone')
+
+
+# Delete Funciton Tests
+class TestDeleteCase(MockSqliteDB):
+    
+    def test_should_raises_an_error_if_the_parameter_table_name_is_not_a_string(self) -> None:
+        with self.assertRaises(AssertionError):
+            database_methods.delete(table_name=2, id=1)
+    
+    
+    def test_should_raises_an_error_if_the_parameter_values_is_not_an_integer(self) -> None:
+        with self.assertRaises(AssertionError):
+            database_methods.delete(table_name='tbl_test', id='1')
+
+
+    def test_should_raise_an_error_if_table_name_is_not_a_valid_table_on_database(self) -> None:
+        with self.assertRaises(ValueError):
+            database_methods.delete(table_name='tbl_store', id=1)
+      
+            
+    def test_should_delete_a_row_on_the_table_on_database(self) -> None:
+        with self.config_conn:
+            database_methods.insert('tbl_product', {'name': 'Test', 'price': 12.5, 'stock': 23})
+            database_methods.delete(table_name='tbl_product', id=1)
+            products = database_methods.select('SELECT * FROM tbl_product')
+            self.assertEqual(len(products), 0)
+            
+            
 if __name__ == '__main__':
     main()
