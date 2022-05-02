@@ -28,7 +28,7 @@ class MockSqliteDB(TestCase):
         'HOST': 'localhost',
         'DATABASE': 'test_wms',
         'USER': 'postgres',
-        'PASSOWORD': '88491662'
+        'PASSOWORD': '@Eduardo404'
     }
 
 
@@ -44,6 +44,9 @@ class MockSqliteDB(TestCase):
 
                 cur.execute('CREATE TABLE tbl_test (id serial primary key, name varchar(70));')
                 conn.commit()
+                
+                cur.execute('CREATE TABLE tbl_product (id serial primary key, name text, price decimal, stock integer);')
+                conn.commit()
 
                 cur.close()
 
@@ -57,31 +60,53 @@ class MockSqliteDB(TestCase):
 
                 cur.execute('DROP TABLE tbl_test;')
                 conn.commit()
+                
+                cur.execute('DROP TABLE tbl_product;')
+                conn.commit()
 
                 cur.close()
 
 
-class TestInsertCase(MockSqliteDB):
-
-    def test_should_insert_a_row_on_table(self) -> None:
+# ShowTable Funciton Tests 
+class TestShowTablesCase(MockSqliteDB):
+    
+    def test_select_all_tables(self) -> None:
         with self.config_conn:
-            with database_methods.connection() as conn:
-                cur = conn.cursor()
+            self.assertIsInstance(database_methods.show_tables(), list)
+            
 
-                cur.execute("INSERT INTO tbl_test (name) VALUES ('test');")
-                conn.commit()
+# Insert Function Tests
+class TestInsertCase(MockSqliteDB):
+    
+    def test_should_raises_an_error_if_the_parameter_table_name_is_not_a_string(self) -> None:
+        with self.assertRaises(AssertionError):
+            database_methods.insert(table_name=2, values={'name': 'Test'})
+    
+    
+    def test_should_raises_an_error_if_the_parameter_values_is_not_a_dictionary(self) -> None:
+        with self.assertRaises(AssertionError):
+            database_methods.insert(table_name='tbl_test', values=('name', 'Test'))
 
-                cur.close()
+
+    def test_should_raise_an_error_if_table_name_is_not_a_valid_table_on_database(self) -> None:
+        with self.assertRaises(ValueError):
+            database_methods.insert(table_name='tbl_store', values={'name': 'Test'})
 
 
-            with database_methods.connection() as conn:
-                cur = conn.cursor()
-
-                cur.execute("select * FROM  tbl_test WHERE id = 1")
-                print('###########', cur.fetchall())
-                conn.commit()
-
-                cur.close()
+    def test_should_insert_a_row_on_tbl_test(self) -> None:
+        
+        with self.config_conn:
+            database_methods.insert('tbl_test', {'name': 'Test'})
+            result = database_methods.select('SELECT * FROM tbl_test')
+            self.assertEqual(len(result), 1)
+    
+    
+    def test_should_insert_a_row_on_tbl_product(self) -> None:
+        
+        with self.config_conn:
+            database_methods.insert('tbl_product', {'name': 'Test', 'price': 12.5, 'stock': 23})
+            result = database_methods.select('SELECT * FROM tbl_product')
+            self.assertEqual(len(result), 1)
 
 
 if __name__ == '__main__':

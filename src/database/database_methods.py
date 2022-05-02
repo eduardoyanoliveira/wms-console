@@ -21,6 +21,20 @@ def connection() -> psycopg2.connect:
     return conn
 
 
+def show_tables() -> list:
+    """
+    Select that get all tables on database
+    """
+
+    with connection() as conn:
+        cur = conn.cursor()
+        cur.execute(" SELECT table_name FROM information_schema.tables WHERE table_schema='public' ")
+        tables = cur.fetchall()
+    
+    if len(tables):
+        return [table[0] for table in tables]
+             
+
 def execute(sql : str) -> None:
     """ Executes a sql string on database """
 
@@ -60,6 +74,10 @@ def delete(table_name: str, id: int) -> None:
 
     assert isinstance(id, int), 'id must be an int'
     assert isinstance(table_name, str), 'table_name must be a valid table on database'
+    
+    # Tries to find the given table on database
+    if table_name not in show_tables():
+        raise ValueError(f"Couldn't find table {table_name} on database")
 
     execute(f'DELETE FROM {table_name} WHERE id = {id}')
 
@@ -70,8 +88,14 @@ def insert(table_name: str, values: dict) -> None:
     """
     assert isinstance(table_name, str), 'table_name must be the name of a valid table on database'
     assert isinstance(values, dict), 'values must be a dictionary with the values to insert on database'
+
+    # Tries to find the given table on database
+    if table_name not in show_tables():
+        raise ValueError(f"Couldn't find table {table_name} on database")
     
-    del values['id']
+    # Removes the key id to prevent primary key duplication
+    if 'id' in values:
+        del values['id']
 
     insert_string = f'INSERT INTO {table_name}' + dict_to_insert_string(values)
         
@@ -88,6 +112,9 @@ def update(table_name: str, values: dict) -> None:
     assert isinstance(table_name, str), 'table_name must be the name of a valid table on database'
     assert isinstance(values, dict), 'values must be a dictionary with the values to insert on database'
     
+    # Tries to find the given table on database
+    if table_name not in show_tables():
+        raise ValueError(f"Couldn't find table {table_name} on database")
 
     update_string = f'UPDATE {table_name} ' + dict_to_update_string(values)
         

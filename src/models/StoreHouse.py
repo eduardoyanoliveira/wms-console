@@ -14,13 +14,14 @@ except:
     raise
 
 
-from database import execute, select, delete, insert, update
+from ast import Store
+from database import select, delete, insert, update
 
 class StoreHouse:
 
     table_name = 'tbl_storehouse'
 
-    def __init__(self, name: str, id: int = 0) -> None:
+    def __init__(self, id: int = 0, name: str = '') -> None:
         """
             Never give the id
         """
@@ -32,10 +33,11 @@ class StoreHouse:
         if self.id == 0:
             self.save(create=True)
 
+
     def __str__(self) -> str:
         """ Describes a class object """
 
-        return f'id {self.id} name {self.name}'
+        return f'name {self.name}'
 
 
     def save(self, create: bool = False) -> None:
@@ -48,9 +50,7 @@ class StoreHouse:
             insert(self.table_name, self.__dict__)  
         else:
             update(self.table_name, self.__dict__)
-
-
-      
+  
 
     @classmethod
     def delete_object(cls, id : int) -> None:
@@ -71,7 +71,7 @@ class StoreHouse:
         sql = f'SELECT * FROM {cls.table_name} WHERE id = {id}'
         result = select(sql)[0] 
 
-        return cls(id=id, name=result[1])
+        return cls(*result)
     
 
     @classmethod
@@ -90,19 +90,8 @@ class StoreHouse:
         
         for row in rows:
             result.append(
-                cls( id=row[0], name=row[1])
+                cls(*row)
             )
             
         return result
-    
-    def get_props(self) -> None:
-        return self.__dict__
-    
-    
 
-
-st = StoreHouse.get_object_by_id(1)
-
-st.name = 'São paulo'
-
-st.save()

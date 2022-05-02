@@ -47,13 +47,14 @@ class TestDictToInsertStringCase(unittest.TestCase):
     
     
     def test_dict_to_create_string(self):
-        self.assertEqual(db_utils.dict_to_insert_string(self.values), '(NAME,PRICE,STOCK) VALUES ("iPhone",1200.0,230);')
+        self.assertEqual(db_utils.dict_to_insert_string(self.values), "(NAME,PRICE,STOCK) VALUES ('iPhone',1200.0,230);")
     
 
 class TestDictToUpdateStringCase(unittest.TestCase):
     
     # dictionary with changes to make in a row
     changes = {
+        'id': 1,
         'PRICE': 1000.00,
         'STOCK': 30
     }
@@ -63,7 +64,7 @@ class TestDictToUpdateStringCase(unittest.TestCase):
             db_utils.dict_to_update_string('changes')
     
     def test_dict_to_update_string(self) -> None:
-        self.assertEqual(db_utils.dict_to_update_string(self.changes), 'SET PRICE = 1000.0,STOCK = 30')
+        self.assertEqual(db_utils.dict_to_update_string(self.changes), 'SET PRICE = 1000.0,STOCK = 30 WHERE id = 1')
 
 
 class TestCheckWhereClauseDictCase(unittest.TestCase):
