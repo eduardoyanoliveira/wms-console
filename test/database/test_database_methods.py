@@ -16,7 +16,8 @@ except:
 
 from unittest import TestCase, main
 from unittest.mock import patch
-from database import database_methods
+from database import database_methods, database_test_config
+
 
 class MockSqliteDB(TestCase):
     """
@@ -24,13 +25,7 @@ class MockSqliteDB(TestCase):
     """
    
     # Test Database connection config 
-    database_config = {
-        'HOST': 'localhost',
-        'DATABASE': 'test_wms',
-        'USER': 'postgres',
-        'PASSOWORD': '@Eduardo404'
-    }
-
+    database_config = database_test_config
 
     @classmethod
     def setUpClass(cls) -> None:

@@ -1,12 +1,8 @@
 import psycopg2
 from .db_utils import dict_to_create_string, dict_to_insert_string, dict_to_update_string, list_to_where_string
+from .database_config import database_production_config
 
-database_config = {
-    'HOST': 'localhost',
-    'DATABASE': 'wms',
-    'USER': 'postgres',
-    'PASSOWORD': '@Eduardo404'
-}
+database_config = database_production_config
 
 
 def connection() -> psycopg2.connect:
