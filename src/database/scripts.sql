@@ -11,10 +11,10 @@ CREATE TABLE tbl_product (
 	len decimal,
 	weight decimal,
 	price decimal,
-	cubic_volume decimal
 );
 
 CREATE TABLE tbl_address(
+	id serial primary key,
 	storehouse_id integer,
 	street_number integer,
 	block_number integer,

@@ -19,7 +19,7 @@ from unittest.mock import patch
 from database import database_methods, database_test_config
 
 
-class MockSqliteDB(TestCase):
+class MockDB(TestCase):
     """
     Create a Mock database for testing
     """
@@ -63,7 +63,7 @@ class MockSqliteDB(TestCase):
 
 
 # ShowTable Funciton Tests 
-class TestShowTablesCase(MockSqliteDB):
+class TestShowTablesCase(MockDB):
     
     def test_select_all_tables(self) -> None:
         with self.config_conn:
@@ -71,7 +71,7 @@ class TestShowTablesCase(MockSqliteDB):
             
 
 # Insert Function Tests
-class TestInsertCase(MockSqliteDB):
+class TestInsertCase(MockDB):
     
     def test_should_raises_an_error_if_the_parameter_table_name_is_not_a_string(self) -> None:
         with self.assertRaises(AssertionError):
@@ -105,7 +105,7 @@ class TestInsertCase(MockSqliteDB):
 
 
 # Update Function Tests
-class TestUpdateCase(MockSqliteDB):
+class TestUpdateCase(MockDB):
     
     def test_should_raises_an_error_if_the_parameter_table_name_is_not_a_string(self) -> None:
         with self.assertRaises(AssertionError):
@@ -131,7 +131,7 @@ class TestUpdateCase(MockSqliteDB):
 
 
 # Delete Funciton Tests
-class TestDeleteCase(MockSqliteDB):
+class TestDeleteCase(MockDB):
     
     def test_should_raises_an_error_if_the_parameter_table_name_is_not_a_string(self) -> None:
         with self.assertRaises(AssertionError):

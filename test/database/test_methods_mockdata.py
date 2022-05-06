@@ -1,13 +1,3 @@
-table_name_one = 'tbl_product'
-    
-# Fields to creata a table
-fields_one = {
-    'ID': 'INTEGER PRIMARY KEY AUTOINCREMENT',
-    'NAME': 'TEXT',
-    'PRICE': 'REAL',
-    'STOCK': 'INTEGER'
-}
-
 values_one =   {
     'NAME': 'iPhone',
     'PRICE': 1200.00,

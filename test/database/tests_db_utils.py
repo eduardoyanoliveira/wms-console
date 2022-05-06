@@ -14,23 +14,7 @@ except:
     raise
 
 import unittest
-from database import db_utils
-
-class TestDictToCreateStringCase(unittest.TestCase):
-    
-    fields = {
-        'ID': 'INTEGER PRIMARY KEY AUTOINCREMENT',
-        'NAME': 'TEXT',
-    }
-    
-    def test_fields_value_error(self) -> None:    
-        with self.assertRaises(AssertionError):
-            db_utils.dict_to_create_string(fields='fields')
-    
-    
-    def test_dict_to_create_string(self):
-        self.assertEqual(db_utils.dict_to_create_string(self.fields), '(ID INTEGER PRIMARY KEY AUTOINCREMENT,NAME TEXT);')
-        
+from database import db_utils   
 
 class TestDictToInsertStringCase(unittest.TestCase):
     
